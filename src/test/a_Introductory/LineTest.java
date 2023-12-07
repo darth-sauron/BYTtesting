@@ -1,6 +1,8 @@
-package a_Introductory;
+package test.a_Introductory;
 
 
+import a_Introductory.Line;
+import a_Introductory.Point;
 import org.junit.Before;
 import org.junit.Test;
 import static org.junit.Assert.*;

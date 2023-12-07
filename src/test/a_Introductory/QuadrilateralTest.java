@@ -1,7 +1,9 @@
-package a_Introductory;
+package test.a_Introductory;
 
 import static org.junit.Assert.*;
 
+import a_Introductory.Point;
+import a_Introductory.Quadrilateral;
 import org.junit.Before;
 import org.junit.Test;
 

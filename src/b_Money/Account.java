@@ -6,9 +6,9 @@ public class Account {
 	private Money content;
 	private Hashtable<String, TimedPayment> timedpayments = new Hashtable<String, TimedPayment>();
 
-	Account(String name, Currency currency) {
+	public Account(String name, Currency currency) {
 		this.content = new Money(0, currency);
-	}
+	}//name
 
 	/**
 	 * Add a timed payment
@@ -43,10 +43,9 @@ public class Account {
 	/**
 	 * A time unit passes in the system
 	 */
-	public void tick() {
-		for (TimedPayment tp : timedpayments.values()) {
-			tp.tick(); tp.tick();
-		}
+	public void tick() throws AccountDoesNotExistException{
+		for (TimedPayment tp : timedpayments.values())
+			tp.tick(); //was repeated twice
 	}
 	
 	/**
@@ -72,6 +71,8 @@ public class Account {
 	public Money getBalance() {
 		return content;
 	}
+
+
 
 	/* Everything below belongs to the private inner class, TimedPayment */
 	private class TimedPayment {

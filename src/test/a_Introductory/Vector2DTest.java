@@ -1,6 +1,7 @@
-package a_Introductory;
+package test.a_Introductory;
 
 
+import a_Introductory.Vector2D;
 import org.junit.Before;
 import org.junit.Test;
 import static org.junit.Assert.*;

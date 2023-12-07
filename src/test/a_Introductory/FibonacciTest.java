@@ -1,8 +1,7 @@
-package a_Introductory;
-
-import static org.junit.Assert.*;
+package test.a_Introductory;
 
 import org.junit.Test;
+import static org.junit.Assert.assertEquals;
 
 import a_Introductory.Fibonacci;
 

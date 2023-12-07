@@ -10,9 +10,10 @@ public class Bank {
 	/**
 	 * New Bank
 	 * @param name Name of this bank
-	 * @param currency Base currency of this bank (If this is a Swedish bank, this might be a currency class representing SEK)
+	 * @param currency Base currency of this bank (If this is a Swedish bank,
+	 * this might be a currency class representing SEK)
 	 */
-	Bank(String name, Currency currency) {
+    public Bank(String name, Currency currency) {
 		this.name = name;
 		this.currency = currency;
 	}
@@ -43,7 +44,7 @@ public class Bank {
 			throw new AccountExistsException();
 		}
 		else {
-			accountlist.get(accountid);
+			accountlist.get(accountid); //mistake
 		}
 	}
 	
@@ -81,11 +82,12 @@ public class Bank {
 	
 	/**
 	 * Get the balance of an account
+	 *
 	 * @param accountid Account to get balance from
 	 * @return Balance of the account
 	 * @throws AccountDoesNotExistException If the account does not exist
 	 */
-	public Integer getBalance(String accountid) throws AccountDoesNotExistException {
+	public Double getBalance(String accountid) throws AccountDoesNotExistException {
 		if (!accountlist.containsKey(accountid)) {
 			throw new AccountDoesNotExistException();
 		}
@@ -120,8 +122,8 @@ public class Bank {
 	 * @throws AccountDoesNotExistException If one of the accounts do not exist
 	 */
 	public void transfer(String fromaccount, String toaccount, Money amount) throws AccountDoesNotExistException {
-		transfer(fromaccount, this, fromaccount, amount);
-	}
+		transfer(fromaccount, this, fromaccount, amount); //toaccount
+	} //should be private
 
 	/**
 	 * Add a timed payment
@@ -133,7 +135,8 @@ public class Bank {
 	 * @param tobank Bank where receiving account resides
 	 * @param toaccount Id of receiving account
 	 */
-	public void addTimedPayment(String accountid, String payid, Integer interval, Integer next, Money amount, Bank tobank, String toaccount) {
+	public void addTimedPayment(String accountid, String payid, Integer interval,
+								Integer next, Money amount, Bank tobank, String toaccount) {
 		Account account = accountlist.get(accountid);
 		account.addTimedPayment(payid, interval, next, amount, tobank, toaccount);
 	}
@@ -155,5 +158,15 @@ public class Bank {
 		for (Account account : accountlist.values()) {
 			account.tick();
 		}
-	}	
+	}
+
+	/**
+	 * Checks if an account with the provided is exists in this bank
+	 * @param id Id of the desired account
+	 * @return boolean value of True or False depending on whether this account exists
+	 */
+	public boolean accountExists(String id){
+		//added this method to make checking for the existence of account easier
+		return accountlist.containsKey(id);
+	}
 }

@@ -1,5 +1,7 @@
 package b_Money;
 
+import java.util.Objects;
+
 public class Money implements Comparable {
 	private int amount;
 	private Currency currency;
@@ -9,7 +11,7 @@ public class Money implements Comparable {
 	 * @param amount	The amount of money
 	 * @param currency	The currency of the money
 	 */
-	Money (Integer amount, Currency currency) {
+	public Money(Integer amount, Currency currency) {
 		this.amount = amount;
 		this.currency = currency;
 	}
@@ -18,8 +20,8 @@ public class Money implements Comparable {
 	 * Return the amount of money.
 	 * @return Amount of money in Double type.
 	 */
-	public Integer getAmount() {
-		
+	public Double getAmount() {
+		return (double) this.amount / 100;
 	}
 	
 	/**
@@ -27,7 +29,7 @@ public class Money implements Comparable {
 	 * @return Currency object representing the currency of this Money
 	 */
 	public Currency getCurrency() {
-		
+		return this.currency;
 	}
 	
 	/**
@@ -37,15 +39,16 @@ public class Money implements Comparable {
 	 *  @return String representing the amount of Money.
 	 */
 	public String toString() {
-		
+		return String.format("%.2f %s", getAmount(), this.currency.getName());
 	}
+
 	
 	/**
 	 * Gets the universal value of the Money, according the rate of its Currency.
 	 * @return The value of the Money in the "universal currency".
 	 */
 	public Integer universalValue() {
-		
+		return (int) (getAmount() * this.currency.getRate());
 	}
 	
 	/**
@@ -54,7 +57,7 @@ public class Money implements Comparable {
 	 * @return A Boolean indicating if the two monies are equal.
 	 */
 	public Boolean equals(Money other) {
-		
+		return Objects.equals(this.universalValue(), other.universalValue());
 	}
 	
 	/**
@@ -64,7 +67,8 @@ public class Money implements Comparable {
 	 * (Remember to convert the other Money before adding the amounts)
 	 */
 	public Money add(Money other) {
-		
+		double sum = getAmount() + other.universalValue() / this.currency.getRate();
+		return new Money((int) (sum * 100), this.currency);
 	}
 
 	/**
@@ -74,7 +78,8 @@ public class Money implements Comparable {
 	 * (Again, remember converting the value of the other Money to this Currency)
 	 */
 	public Money sub(Money other) {
-		
+		double difference = getAmount() - other.universalValue() / this.currency.getRate();
+		return new Money((int) (difference * 100), this.currency);
 	}
 	
 	/**
@@ -82,14 +87,14 @@ public class Money implements Comparable {
 	 * @return True if the amount of this Money is equal to 0.0, False otherwise
 	 */
 	public Boolean isZero() {
-		
+		return this.amount == 0;
 	}
 	/**
 	 * Negate the amount of money, i.e. if the amount is 10.0 SEK the negation returns -10.0 SEK
 	 * @return A new instance of the money class initialized with the new negated money amount.
 	 */
 	public Money negate() {
-		
+		return new Money(-this.amount, this.currency);
 	}
 	
 	/**
@@ -102,6 +107,8 @@ public class Money implements Comparable {
 	 * A positive integer if this Money is more valuiable than the other Money.
 	 */
 	public int compareTo(Object other) {
-		
+		Money temp = (Money) other;
+		double diff = this.universalValue() - temp.universalValue();
+		return (int) diff;
 	}
 }
