@@ -54,7 +54,7 @@ public class BankTest {
 	public void testDeposit() throws AccountDoesNotExistException{ //testing the depositing function
 		//Existing Account
 		SweBank.deposit("Ulrika", new Money(1000, SEK));
-		assertEquals(Double.valueOf(1000), SweBank.getBalance("Ulrika"));
+		assertEquals(Double.valueOf(10), SweBank.getBalance("Ulrika"));
 
 		// Testing for a non-existing account
 		SweBank.deposit("Charlotte", new Money(1000, SEK));
@@ -63,7 +63,7 @@ public class BankTest {
 	}
 
 	@Test
-	public void testWithdraw() throws AccountDoesNotExistException { //testing the withdrawing function
+	public void testWithdraw() throws AccountDoesNotExistException, NotEnoughFundsException { //testing the withdrawing function
 
 		// Testing existing account
 		SweBank.deposit("Bob", new Money(2000, SEK));
@@ -89,11 +89,13 @@ public class BankTest {
 	}
 
 	@Test
-	public void testTransfer() throws AccountDoesNotExistException { //testing transferring function
+	public void testTransfer()
+			throws AccountDoesNotExistException, NotEnoughFundsException { //testing transferring function
+
 		//if account does exist
 		SweBank.deposit("Bob", new Money(3000, SEK));
-		SweBank.transfer("Bob", SweBank,"Ulrika", new Money(3000, SEK)); //TODO:NotEnoughMoneys
-		assertEquals(Double.valueOf(3000), SweBank.getBalance("Ulrika"));
+		SweBank.transfer("Bob", SweBank,"Ulrika", new Money(3000, SEK));
+		assertEquals(Double.valueOf(30), SweBank.getBalance("Ulrika"));
 		assertEquals(Double.valueOf(0), SweBank.getBalance("Bob"));
 
 		//if account doesn't exist
@@ -102,21 +104,24 @@ public class BankTest {
 	}
 
 	@Test
-	public void testTimedPayment() throws AccountDoesNotExistException {
+	public void testTimedPayment() throws AccountDoesNotExistException, NotEnoughFundsException {
 
 		//if account does exist
 		SweBank.deposit("Bob", new Money(1000, SEK));
-		SweBank.addTimedPayment("Bob", "Book club fee",2,
-				3, new Money(500, DKK), DanskeBank, "Gertrud");
+		SweBank.addTimedPayment("Bob", "Book club fee",3,
+				1, new Money(1000, SEK), DanskeBank, "Gertrud");
+		SweBank.tick();
+		SweBank.tick();
+
 
 		assertEquals(Double.valueOf(0), SweBank.getBalance("Bob"));
-		assertEquals(Double.valueOf(1000), SweBank.getBalance("Gertrud"));
+		assertEquals(Double.valueOf(7), DanskeBank.getBalance("Gertrud"));
 
 		//if account does not exist
 		SweBank.deposit("Bob", new Money(1000, SEK));
 		SweBank.addTimedPayment("Bob", "Book club fee",2,
 					3, new Money(500, DKK), DanskeBank, "Agnes");
-		fail("Expected AccountExistsException");
+		fail("Expected AccountDoesntExistException");
 
 	}
 }

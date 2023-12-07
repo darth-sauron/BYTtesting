@@ -4,11 +4,11 @@ import java.util.Hashtable;
 
 public class Account {
 	private Money content;
-	private Hashtable<String, TimedPayment> timedpayments = new Hashtable<String, TimedPayment>();
+	private Hashtable<String, TimedPayment> timed_payments = new Hashtable<String, TimedPayment>();//added _ to make it look nicer
 
-	public Account(String name, Currency currency) {
+	public Account(Currency currency) { //no need for a name
 		this.content = new Money(0, currency);
-	}//name
+	}
 
 	/**
 	 * Add a timed payment
@@ -16,12 +16,13 @@ public class Account {
 	 * @param interval Number of ticks between payments
 	 * @param next Number of ticks till first payment
 	 * @param amount Amount of Money to transfer each payment
-	 * @param tobank Bank where receiving account resides
-	 * @param toaccount Id of receiving account
+	 * @param to_bank Bank where receiving account resides
+	 * @param to_account Id of receiving account
 	 */
-	public void addTimedPayment(String id, Integer interval, Integer next, Money amount, Bank tobank, String toaccount) {
-		TimedPayment tp = new TimedPayment(interval, next, amount, this, tobank, toaccount);
-		timedpayments.put(id, tp);
+	public void addTimedPayment(String id, Integer interval, Integer next, Money amount, Bank to_bank,
+								String to_account) {//renamed some arguments to make them look better
+		TimedPayment tp = new TimedPayment(interval, next, amount, this, to_bank, to_account);
+		timed_payments.put(id, tp);
 	}
 	
 	/**
@@ -29,7 +30,7 @@ public class Account {
 	 * @param id Id of timed payment to remove
 	 */
 	public void removeTimedPayment(String id) {
-		timedpayments.remove(id);
+		timed_payments.remove(id);
 	}
 	
 	/**
@@ -37,14 +38,14 @@ public class Account {
 	 * @param id Id of timed payment to check for
 	 */
 	public boolean timedPaymentExists(String id) {
-		return timedpayments.containsKey(id);
+		return timed_payments.containsKey(id);
 	}
 
 	/**
 	 * A time unit passes in the system
 	 */
-	public void tick() throws AccountDoesNotExistException{
-		for (TimedPayment tp : timedpayments.values())
+	public void tick() throws AccountDoesNotExistException, NotEnoughFundsException{
+		for (TimedPayment tp : timed_payments.values())
 			tp.tick(); //was repeated twice
 	}
 	
@@ -60,8 +61,12 @@ public class Account {
 	 * Withdraw money from the account
 	 * @param money Money to withdraw.
 	 */
-	public void withdraw(Money money) {
-		content = content.sub(money);
+	public void withdraw(Money money) throws NotEnoughFundsException {
+		//created a new exception for when the funds on the account aren't sufficient
+		if(content.getAmount() <= 0)
+			throw new NotEnoughFundsException();
+		else
+		   content = content.sub(money);
 	}
 
 	/**
@@ -91,8 +96,8 @@ public class Account {
 			this.toaccount = toaccount;
 		}
 
-		/* Return value indicates whether or not a transfer was initiated */
-		public Boolean tick() {
+		/* Return value indicates whether a transfer was initiated */
+		public Boolean tick() throws NotEnoughFundsException{
 			if (next == 0) {
 				next = interval;
 

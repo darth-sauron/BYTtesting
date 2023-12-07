@@ -21,7 +21,7 @@ public class Money implements Comparable {
 	 * @return Amount of money in Double type.
 	 */
 	public Double getAmount() {
-		return (double) this.amount / 100;
+		return Double.valueOf(this.amount / 100);
 	}
 	
 	/**
@@ -48,7 +48,7 @@ public class Money implements Comparable {
 	 * @return The value of the Money in the "universal currency".
 	 */
 	public Integer universalValue() {
-		return (int) (getAmount() * this.currency.getRate());
+		return (int) (this.amount * this.currency.getRate());
 	}
 	
 	/**
@@ -67,8 +67,8 @@ public class Money implements Comparable {
 	 * (Remember to convert the other Money before adding the amounts)
 	 */
 	public Money add(Money other) {
-		double sum = getAmount() + other.universalValue() / this.currency.getRate();
-		return new Money((int) (sum * 100), this.currency);
+		double sum = this.amount + other.universalValue() / this.currency.getRate();
+		return new Money((int) sum , this.currency);
 	}
 
 	/**
@@ -78,8 +78,8 @@ public class Money implements Comparable {
 	 * (Again, remember converting the value of the other Money to this Currency)
 	 */
 	public Money sub(Money other) {
-		double difference = getAmount() - other.universalValue() / this.currency.getRate();
-		return new Money((int) (difference * 100), this.currency);
+		double difference = this.amount - other.universalValue() / this.currency.getRate();
+		return new Money((int) difference, this.currency);
 	}
 	
 	/**

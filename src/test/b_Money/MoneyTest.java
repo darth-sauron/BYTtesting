@@ -27,8 +27,8 @@ public class MoneyTest {
 
 	@Test
 	public void testGetAmount() { //tests getting the amount
-		assertEquals(Double.valueOf(10000), SEK100.getAmount());
-		assertEquals(Double.valueOf(1000), EUR10.getAmount());
+		assertEquals(Double.valueOf(100), SEK100.getAmount());
+		assertEquals(Double.valueOf(10), EUR10.getAmount());
 	}
 
 	@Test
@@ -39,9 +39,9 @@ public class MoneyTest {
 
 	@Test
 	public void testToString() { //testing getting the showing the info as string
-		assertEquals("100.0 SEK", SEK100.toString());
-		assertEquals("1000.0 EUR", EUR10.toString());
-		assertEquals("0.0 SEK", SEK0.toString());
+		assertEquals("100.00 SEK", SEK100.toString());
+		assertEquals("10.00 EUR", EUR10.toString());
+		assertEquals("0.00 SEK", SEK0.toString());
 	}
 
 	@Test
@@ -58,13 +58,13 @@ public class MoneyTest {
 
 	@Test
 	public void testAdd() { // testing addition of different money
-		assertEquals(Double.valueOf(2000), SEK100.add(EUR10).getAmount());
+		assertEquals(Double.valueOf(200), SEK100.add(EUR10).getAmount());
 		assertEquals(EUR, EUR0.add(SEK200).getCurrency());
 	}
 
 	@Test
 	public void testSub() { //testing subtraction
-		assertEquals(Double.valueOf(19000), SEK200.sub(EUR10).getAmount());
+		assertEquals(Double.valueOf(100), SEK200.sub(EUR10).getAmount());
 		assertEquals(EUR, EUR0.sub(SEK100).getCurrency());
 
 	}
@@ -77,7 +77,7 @@ public class MoneyTest {
 
 	@Test
 	public void testNegate() { //testing negation of money
-		assertEquals(-1000.0, EUR10.negate().getAmount(), 0.01);
+		assertEquals(Double.valueOf(-10.0), EUR10.negate().getAmount());
 		assertEquals(EUR, EUR10.negate().getCurrency());
 	}
 
@@ -85,7 +85,7 @@ public class MoneyTest {
 	public void testCompareTo() { //testing comparing different values of money
 		assertTrue(SEK100.compareTo(SEK200) < 0);
 		assertTrue(EUR10.compareTo(EUR20) < 0);
-		assertTrue(SEK100.compareTo(EUR10) > 0);
+		assertTrue(SEK100.compareTo(EUR10) == 0);
 		assertEquals(0, SEK100.compareTo(EUR10));
 	}
 }

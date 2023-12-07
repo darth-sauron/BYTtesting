@@ -44,7 +44,7 @@ public class Bank {
 			throw new AccountExistsException();
 		}
 		else {
-			accountlist.get(accountid); //mistake
+			accountlist.put(accountid, new Account(this.currency)); //didnt add the account before, now does
 		}
 	}
 	
@@ -55,7 +55,7 @@ public class Bank {
 	 * @throws AccountDoesNotExistException If the account does not exist
 	 */
 	public void deposit(String accountid, Money money) throws AccountDoesNotExistException {
-		if (accountlist.containsKey(accountid)) {
+		if (!accountlist.containsKey(accountid)) { //should add "!" in the front to mean does *not* exist
 			throw new AccountDoesNotExistException();
 		}
 		else {
@@ -70,13 +70,13 @@ public class Bank {
 	 * @param money Money to withdraw
 	 * @throws AccountDoesNotExistException If the account does not exist
 	 */
-	public void withdraw(String accountid, Money money) throws AccountDoesNotExistException {
+	public void withdraw(String accountid, Money money) throws AccountDoesNotExistException, NotEnoughFundsException {
 		if (!accountlist.containsKey(accountid)) {
 			throw new AccountDoesNotExistException();
 		}
 		else {
 			Account account = accountlist.get(accountid);
-			account.deposit(money);
+			account.withdraw(money);
 		}
 	}
 	
@@ -97,34 +97,45 @@ public class Bank {
 	}
 
 	/**
-	 * Transfer money between two accounts
-	 * @param fromaccount Id of account to deduct from in this Bank
-	 * @param tobank Bank where receiving account resides
-	 * @param toaccount Id of receiving account
+	 * Transfer money between two accounts within the same bank
+	 * @param fromAccount Id of account to deduct from
+	 * @param toAccount Id of receiving account
 	 * @param amount Amount of Money to transfer
-	 * @throws AccountDoesNotExistException If one of the accounts do not exist
+	 * @throws AccountDoesNotExistException If one of the accounts does not exist
+	 * @throws NotEnoughFundsException If there are not enough funds in the source account
 	 */
-	public void transfer(String fromaccount, Bank tobank, String toaccount, Money amount) throws AccountDoesNotExistException {
-		if (!accountlist.containsKey(fromaccount) || !tobank.accountlist.containsKey(toaccount)) {
+	private void transferWithinBank(String fromAccount, String toAccount, Money amount)
+			throws AccountDoesNotExistException, NotEnoughFundsException {
+		if (!accountExists(fromAccount) || !accountExists(toAccount)) {
 			throw new AccountDoesNotExistException();
 		}
-		else {
-			accountlist.get(fromaccount).withdraw(amount);
-			tobank.accountlist.get(toaccount).deposit(amount);
-		}		
+
+		accountlist.get(fromAccount).withdraw(amount);
+		accountlist.get(toAccount).deposit(amount);
 	}
 
 	/**
-	 * Transfer money between two accounts on the same bank
-	 * @param fromaccount Id of account to deduct from
-	 * @param toaccount Id of receiving account
+	 * Transfer money between two accounts
+	 * @param fromAccount Id of account to deduct from in this Bank
+	 * @param toBank Bank where receiving account resides
+	 * @param toAccount Id of receiving account
 	 * @param amount Amount of Money to transfer
-	 * @throws AccountDoesNotExistException If one of the accounts do not exist
+	 * @throws AccountDoesNotExistException If one of the accounts does not exist
+	 * @throws NotEnoughFundsException If there are not enough funds in the source account
 	 */
-	public void transfer(String fromaccount, String toaccount, Money amount) throws AccountDoesNotExistException {
-		transfer(fromaccount, this, fromaccount, amount); //toaccount
-	} //should be private
+	public void transfer(String fromAccount, Bank toBank, String toAccount, Money amount)
+			throws AccountDoesNotExistException, NotEnoughFundsException {
+		if (this == toBank) {
+			transferWithinBank(fromAccount, toAccount, amount);
+		} else {
+			if (!accountExists(fromAccount) || !toBank.accountExists(toAccount)) {
+				throw new AccountDoesNotExistException();
+			}
 
+			accountlist.get(fromAccount).withdraw(amount);
+			toBank.accountlist.get(toAccount).deposit(amount);
+		}
+	}
 	/**
 	 * Add a timed payment
 	 * @param accountid Id of account to deduct from in this Bank
@@ -154,7 +165,7 @@ public class Bank {
 	/**
 	 * A time unit passes in the system
 	 */
-	public void tick() throws AccountDoesNotExistException {
+	public void tick() throws AccountDoesNotExistException, NotEnoughFundsException{
 		for (Account account : accountlist.values()) {
 			account.tick();
 		}

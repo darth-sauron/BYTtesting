@@ -15,7 +15,7 @@ public class AccountTest {
 		SEK = new Currency("SEK", 0.15);
 		SweBank = new Bank("SweBank", SEK);
 		SweBank.openAccount("Alice");
-		testAccount = new Account("Hans", SEK);
+		testAccount = new Account(SEK);
 		testAccount.deposit(new Money(10000000, SEK));
 		SweBank.deposit("Alice", new Money(1000000, SEK));
 	}
@@ -38,16 +38,24 @@ public class AccountTest {
 	}
 
 	@Test
-	public void testTimedPayment() throws AccountDoesNotExistException {
-		testAccount.addTimedPayment("payment1", 1, 1, new Money(10000000, SEK), SweBank,
-				"Alice");
+	public void testTimedPayment() throws AccountDoesNotExistException, NotEnoughFundsException {
+		testAccount.addTimedPayment("payment1", 1, 1, new Money(10000000, SEK),
+				SweBank, "Alice");
+
 		testAccount.tick();
+		testAccount.tick();
+
 		assertEquals(Double.valueOf(0), testAccount.getBalance().getAmount());
+
+		//testing for when there's not enough money
+		testAccount.addTimedPayment("payment2", 1, 1, new Money(10000000, SEK),
+				SweBank, "Alice");
+		fail("Not enough funds");
 
 	}
 
 	@Test
-	public void testAddWithdraw() { //testing withdrawing money
+	public void testAddWithdraw() throws NotEnoughFundsException { //testing withdrawing money
 		testAccount.withdraw(new Money(10000000, SEK));
 		assertEquals(Double.valueOf(0), testAccount.getBalance().getAmount());
 
@@ -55,6 +63,6 @@ public class AccountTest {
 
 	@Test
 	public void testGetBalance() { //testing getting the balance of account
-		assertEquals(Double.valueOf(10000000), testAccount.getBalance().getAmount());
+		assertEquals(Double.valueOf(100000), testAccount.getBalance().getAmount());
 	}
 }
