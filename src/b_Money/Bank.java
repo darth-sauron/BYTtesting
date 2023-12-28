@@ -3,10 +3,10 @@ package b_Money;
 import java.util.Hashtable;
 
 public class Bank {
-	private Hashtable<String, Account> accountlist = new Hashtable<String, Account>();
+	private Hashtable<String, Account> accountlist = new Hashtable<>();
 	private String name;
 	private Currency currency;
-	
+
 	/**
 	 * New Bank
 	 * @param name Name of this bank
@@ -17,7 +17,7 @@ public class Bank {
 		this.name = name;
 		this.currency = currency;
 	}
-	
+
 	/**
 	 * Get the name of this bank
 	 * @return Name of this bank
@@ -25,7 +25,7 @@ public class Bank {
 	public String getName() {
 		return name;
 	}
-	
+
 	/**
 	 * Get the Currency of this bank
 	 * @return The Currency of this bank
@@ -33,7 +33,7 @@ public class Bank {
 	public Currency getCurrency() {
 		return currency;
 	}
-	
+
 	/**
 	 * Open an account at this bank.
 	 * @param accountid The ID of the account
@@ -42,12 +42,11 @@ public class Bank {
 	public void openAccount(String accountid) throws AccountExistsException {
 		if (accountlist.containsKey(accountid)) {
 			throw new AccountExistsException();
-		}
-		else {
+		} else {
 			accountlist.put(accountid, new Account(this.currency)); //didnt add the account before, now does
 		}
 	}
-	
+
 	/**
 	 * Deposit money to an account
 	 * @param accountid Account to deposit to
@@ -57,13 +56,12 @@ public class Bank {
 	public void deposit(String accountid, Money money) throws AccountDoesNotExistException {
 		if (!accountlist.containsKey(accountid)) { //should add "!" in the front to mean does *not* exist
 			throw new AccountDoesNotExistException();
-		}
-		else {
+		} else {
 			Account account = accountlist.get(accountid);
 			account.deposit(money);
 		}
 	}
-	
+
 	/**
 	 * Withdraw money from an account
 	 * @param accountid Account to withdraw from
@@ -73,13 +71,12 @@ public class Bank {
 	public void withdraw(String accountid, Money money) throws AccountDoesNotExistException, NotEnoughFundsException {
 		if (!accountlist.containsKey(accountid)) {
 			throw new AccountDoesNotExistException();
-		}
-		else {
+		} else {
 			Account account = accountlist.get(accountid);
 			account.withdraw(money);
 		}
 	}
-	
+
 	/**
 	 * Get the balance of an account
 	 *
@@ -90,8 +87,7 @@ public class Bank {
 	public Double getBalance(String accountid) throws AccountDoesNotExistException {
 		if (!accountlist.containsKey(accountid)) {
 			throw new AccountDoesNotExistException();
-		}
-		else {
+		} else {
 			return accountlist.get(accountid).getBalance().getAmount();
 		}
 	}
@@ -136,6 +132,7 @@ public class Bank {
 			toBank.accountlist.get(toAccount).deposit(amount);
 		}
 	}
+
 	/**
 	 * Add a timed payment
 	 * @param accountid Id of account to deduct from in this Bank
@@ -147,11 +144,14 @@ public class Bank {
 	 * @param toaccount Id of receiving account
 	 */
 	public void addTimedPayment(String accountid, String payid, Integer interval,
-								Integer next, Money amount, Bank tobank, String toaccount) {
+								Integer next, Money amount, Bank tobank, String toaccount)
+			throws AccountDoesNotExistException {
+		if(!tobank.accountExists(toaccount) || !this.accountlist.containsKey(accountid))
+		    throw new AccountDoesNotExistException();
 		Account account = accountlist.get(accountid);
 		account.addTimedPayment(payid, interval, next, amount, tobank, toaccount);
 	}
-	
+
 	/**
 	 * Remove a timed payment
 	 * @param accountid Id of account to remove timed payment from
@@ -161,7 +161,7 @@ public class Bank {
 		Account account = accountlist.get(accountid);
 		account.removeTimedPayment(id);
 	}
-	
+
 	/**
 	 * A time unit passes in the system
 	 */

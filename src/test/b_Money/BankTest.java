@@ -44,8 +44,7 @@ public class BankTest {
 		assertTrue(SweBank.accountExists("Alice"));
 
 		//tests for account that exists already
-		SweBank.openAccount("Bob");
-		fail("Expected AccountExistsException");
+		assertThrows(AccountExistsException.class, () -> SweBank.openAccount("Bob"));
 
 
 	}
@@ -57,13 +56,14 @@ public class BankTest {
 		assertEquals(Double.valueOf(10), SweBank.getBalance("Ulrika"));
 
 		// Testing for a non-existing account
-		SweBank.deposit("Charlotte", new Money(1000, SEK));
-		fail("Expected AccountDoesNotExistException");
+		assertThrows(AccountDoesNotExistException.class, () -> SweBank.deposit("Charlotte",
+				new Money(1000, SEK)));
 
 	}
 
 	@Test
-	public void testWithdraw() throws AccountDoesNotExistException, NotEnoughFundsException { //testing the withdrawing function
+	public void testWithdraw() throws AccountDoesNotExistException, NotEnoughFundsException {
+		//testing the withdrawing function
 
 		// Testing existing account
 		SweBank.deposit("Bob", new Money(2000, SEK));
@@ -71,20 +71,20 @@ public class BankTest {
 		assertEquals(Double.valueOf(0), SweBank.getBalance("Bob"));
 
 		// Testing for a non-existing account
-		SweBank.withdraw("Alice", new Money(1000, SEK));
-		fail("Expected AccountDoesNotExistException");
+		assertThrows(AccountDoesNotExistException.class, () -> SweBank.withdraw("Alice",
+				new Money(1000, SEK)));
 
 	}
 
 	@Test
-	public void testGetBalance() throws AccountDoesNotExistException {//tests getting the current balance of the customer
+	public void testGetBalance() throws AccountDoesNotExistException {
+		//tests getting the current balance of the customer
 
 		//If account exists
 		assertEquals(Double.valueOf(0), SweBank.getBalance("Ulrika"));
 
 		// If account doesn't exist
-		SweBank.getBalance("Saruman");
-		fail("Expected AccountDoesNotExistException");
+		assertThrows(AccountDoesNotExistException.class, () -> SweBank.getBalance("Saruman"));
 
 	}
 
@@ -99,8 +99,8 @@ public class BankTest {
 		assertEquals(Double.valueOf(0), SweBank.getBalance("Bob"));
 
 		//if account doesn't exist
-		SweBank.transfer("Alice", SweBank,"Bob", new Money(1000, SEK));
-		fail("Expected AccountDoesNotExistException");
+		assertThrows(AccountDoesNotExistException.class, () ->
+				SweBank.transfer("Alice", SweBank,"Bob", new Money(1000, SEK)));
 	}
 
 	@Test
@@ -119,9 +119,10 @@ public class BankTest {
 
 		//if account does not exist
 		SweBank.deposit("Bob", new Money(1000, SEK));
-		SweBank.addTimedPayment("Bob", "Book club fee",2,
-					3, new Money(500, DKK), DanskeBank, "Agnes");
-		fail("Expected AccountDoesntExistException");
+		assertThrows(AccountDoesNotExistException.class, () ->
+				SweBank.addTimedPayment("Bob", "Book club fee",2,
+						3, new Money(500, DKK), DanskeBank, "Agnes"));
+
 
 	}
 }

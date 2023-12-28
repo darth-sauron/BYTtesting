@@ -87,7 +87,8 @@ public class Account {
 		private Bank tobank;
 		private String toaccount;
 		
-		TimedPayment(Integer interval, Integer next, Money amount, Account fromaccount, Bank tobank, String toaccount) {
+		TimedPayment(Integer interval, Integer next, Money amount, Account fromaccount,
+					 Bank tobank, String toaccount) {
 			this.interval = interval;
 			this.next = next;
 			this.amount = amount;
